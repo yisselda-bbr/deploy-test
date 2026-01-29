@@ -1,50 +1,38 @@
 # Deploy Branch Selector Demo
 
-A minimal repo to test GitHub Actions `workflow_dispatch` with branch autocomplete.
+A succinct, clear, and precise demonstration of best deployment UX for dev/test environments. Deploy any feature branch straight to dev, before opening a PR, using the GitHub Actions "Use workflow from" dropdown—branch autocomplete built-in!
 
-## The Goal
+## Why This Matters
+This repo is crafted by a senior staff lead software engineer & solutions architect, with a passion for UX and a pedagogical bias rooted in the neuroscience of deep learning (inspired by Barbara Oakley, Terrence Sejnowski, Alistair McConville). The workflow maximizes learnability, minimizes cognitive friction, and fits iterative shipping.
 
-Get a branch dropdown with autocomplete when manually triggering deployments, instead of a free-text input field.
+## Quick Demo
+1. Push this repo to GitHub.
+2. Create a feature branch:  
+   `git checkout -b feature/my-new-feature && git push origin feature/my-new-feature`
+3. From the Actions tab, manually trigger the deploy workflow.
+4. Select any branch using the branch dropdown (with autocomplete) and hit "Run workflow."
+5. Confirm the workflow operates on the selected branch (see output).
 
-## How It Works
+## Implementation
+- No free-text branch input!
+- Uses GitHub's built-in branch picker for branch selection (via `workflow_dispatch` default UI)
+- The workflow reads `github.ref` to deploy the selected branch, making the process precise and foolproof.
 
-Instead of using `workflow_dispatch` inputs (which only support static choices or free text), we leverage the built-in **"Use workflow from"** dropdown that GitHub provides for all `workflow_dispatch` workflows.
-
-The workflow reads `context.ref` to determine which branch was selected and deploys that.
-
-## Testing
-
-1. Push this repo to GitHub
-2. Create a few test branches:
-   ```bash
-   git checkout -b feature/test-1
-   git push origin feature/test-1
-   
-   git checkout -b feature/test-2  
-   git push origin feature/test-2
-   ```
-3. Go to **Actions** → **Deploy to Development** → **Run workflow**
-4. Click the **"Use workflow from"** dropdown - you'll see autocomplete!
-5. Select a branch and click **Run workflow**
-6. Check the workflow output to confirm it deployed the right branch
-
-## Key Workflow Snippet
-
+## Key Workflow Example
 ```yaml
 on:
   workflow_dispatch:
-    # No inputs - use "Use workflow from" dropdown instead
-
+    # No inputs - use "Use workflow from" dropdown
 jobs:
   deploy:
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/github-script@v7
         with:
           script: |
             const ref = context.ref.replace('refs/heads/', '');
-            // ref now contains the branch selected in "Use workflow from"
+            // ref = the branch picked in "Use workflow from"
 ```
 
-## Applying to Your Real Workflow
-
-Once confirmed working, update your production workflow's `resolve-ref` job to use `context.ref` for `workflow_dispatch` events instead of `context.payload.inputs.ref`.
+## Designed for Teaching & Speed
+This example is optimized to help you, your team, or your students ship, test, and learn faster—with fewer mistakes.
